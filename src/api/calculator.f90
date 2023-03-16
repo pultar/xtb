@@ -338,7 +338,7 @@ end subroutine loadGFN2xTB_api
 
 
 !> Add a solvation model to calculator (requires loaded parametrisation)
-subroutine setSolvent_api(venv, vcalc, charptr, state, temperature, grid) &
+subroutine setSolvent_api(venv, vcalc, charptr, state, temperature, grid, useAlpb) &
       & bind(C, name="xtb_setSolvent")
    !DEC$ ATTRIBUTES DLLEXPORT :: setSolvent_api
    character(len=*), parameter :: source = 'xtb_api_setSolvent'
@@ -350,9 +350,11 @@ subroutine setSolvent_api(venv, vcalc, charptr, state, temperature, grid) &
    integer(c_int), intent(in), optional :: state
    real(c_double), intent(in), optional :: temperature
    integer(c_int), intent(in), optional :: grid
+   logical(c_bool), intent(in), optional :: useAlpb
    character(len=:), allocatable :: solvent
    type(TSolvInput) :: input
    integer :: gsolvstate, nang
+   logical :: alpb
    real(wp) :: temp
    logical :: exitRun
 
@@ -389,6 +391,12 @@ subroutine setSolvent_api(venv, vcalc, charptr, state, temperature, grid) &
          nang = 230
       end if
 
+      if (present(useAlpb)) then
+         alpb = useAlpb
+       else
+         alpb = .false.
+       end if
+
       call c_f_character(charptr, solvent)
 
       ! PGI 20.5 cannot use default constructor with deferred-length characters:
@@ -397,9 +405,12 @@ subroutine setSolvent_api(venv, vcalc, charptr, state, temperature, grid) &
       input%solvent = solvent
       input%temperature = temp
       input%state = gsolvstate
-      input%nang = nang
-      input%alpb = .false.
-      input%kernel = gbKernel%still
+      input%alpb = alpb
+      if (alpb) then
+        input%kernel = gbKernel%p16
+      else
+        input%kernel = gbKernel%still
+      end if
       call addSolvationModel(env%ptr, calc%ptr, input)
 
       call env%ptr%check(exitRun)
