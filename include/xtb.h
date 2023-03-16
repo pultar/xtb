@@ -185,7 +185,8 @@ xtb_setSolvent(xtb_TEnvironment /* env */,
                char* /* solvent */,
                int* /* state */,
                double* /* temp */,
-               int* /* grid */) XTB_API_SUFFIX__VERSION_1_0_0;
+               int* /* grid */,
+               bool* /* use alpb */) XTB_API_SUFFIX__VERSION_1_0_0;
 
 /// Unset the solvation model
 extern XTB_API_ENTRY void XTB_API_CALL

@@ -104,7 +104,7 @@ int testFirst() {
   if (!check(wbo[9], 2.89823984265213, 1.0e-8, "Bond order does not match"))
     goto error;
 
-  xtb_setSolvent(env, calc, solvent, NULL, NULL, NULL);
+  xtb_setSolvent(env, calc, solvent, NULL, NULL, NULL, NULL);
   if (xtb_checkEnvironment(env))
     goto error;
 
