@@ -405,6 +405,7 @@ subroutine setSolvent_api(venv, vcalc, charptr, state, temperature, grid, useAlp
       input%solvent = solvent
       input%temperature = temp
       input%state = gsolvstate
+      input%nang = nang
       input%alpb = alpb
       if (alpb) then
         input%kernel = gbKernel%p16
